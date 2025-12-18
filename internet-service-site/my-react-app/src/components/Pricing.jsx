@@ -8,11 +8,14 @@ export default function PricingSection() {
 
   useEffect(() => {
     const fetchPricing = async () => {
+      setLoading(true);
       try {
-        const res = await axios.get("http://localhost:5000/pricing");
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        const res = await axios.get(`${API_URL}/pricing`);
         setPlans(res.data.pricing || []);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch pricing plans:", err);
+        setPlans([]);
       } finally {
         setLoading(false);
       }
@@ -49,9 +52,7 @@ export default function PricingSection() {
           {plans.map((plan) => (
             <div className="col-lg-4 col-md-6 mb-4" key={plan.id}>
               <div className={`pricing-card ${plan.popular ? "popular" : ""}`}>
-                {plan.popular && (
-                  <div className="popular-badge">Most Popular</div>
-                )}
+                {plan.popular && <div className="popular-badge">Most Popular</div>}
 
                 <div className="card-body text-center">
                   <h5 className="card-title">{plan.plan_name}</h5>
