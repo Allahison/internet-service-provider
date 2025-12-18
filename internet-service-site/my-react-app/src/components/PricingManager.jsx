@@ -14,13 +14,19 @@ export default function PricingManager({ user }) {
     popular: false,
   });
 
+  // Use Vite environment variable
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
   /* ===============================
      FETCH PLANS
   ================================ */
   const fetchPlans = async () => {
     setPlanLoading(true);
     try {
-      const res = await axios.get("http://localhost:5000/pricing");
+      const res = await axios.get(`${API_URL}/pricing`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+
       const formattedPlans = (res.data.pricing || []).map((plan) => ({
         ...plan,
         features: Array.isArray(plan.features) ? plan.features : [],
@@ -67,14 +73,12 @@ export default function PricingManager({ user }) {
 
     try {
       if (editingPlan) {
-        await axios.put(
-          `http://localhost:5000/pricing/${editingPlan.id}`,
-          payload,
-          { headers: { Authorization: `Bearer ${user.token}` } }
-        );
+        await axios.put(`${API_URL}/pricing/${editingPlan.id}`, payload, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
         alert("Plan updated!");
       } else {
-        await axios.post("http://localhost:5000/pricing", payload, {
+        await axios.post(`${API_URL}/pricing`, payload, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
         alert("Plan created!");
@@ -110,11 +114,11 @@ export default function PricingManager({ user }) {
     if (!window.confirm("Delete this plan?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/pricing/${id}`, {
+      await axios.delete(`${API_URL}/pricing/${id}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       alert("Plan deleted!");
-      fetchPlans();
+      setPlans((prev) => prev.filter((plan) => plan.id !== id));
     } catch (err) {
       console.error(err);
       alert("Failed to delete plan");
@@ -230,3 +234,4 @@ export default function PricingManager({ user }) {
     </div>
   );
 }
+
