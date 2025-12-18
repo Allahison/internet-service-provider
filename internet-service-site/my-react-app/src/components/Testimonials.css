@@ -1,0 +1,161 @@
+/* Testimonials.css - Premium, Futuristic Theme for Black Box AI */
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --glow-color: rgba(102, 126, 234, 0.8);
+  --text-color: #ffffff;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --backdrop-blur: blur(10px);
+  --font-family: 'Inter', sans-serif; /* Modern font, ensure imported */
+}
+
+.testimonials-section {
+  background: var(--primary-gradient);
+  padding: 5rem 0;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-family);
+}
+
+.testimonials-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  z-index: 1;
+}
+
+.testimonials-section > .container {
+  position: relative;
+  z-index: 2;
+}
+
+.testimonials-heading {
+  font-weight: 700;
+  font-size: 2.5rem;
+  letter-spacing: 1px;
+  margin-bottom: 3rem;
+  color: var(--text-color);
+  text-shadow: 0 0 20px var(--glow-color);
+}
+
+.testimonial-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  height: 100%;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  border-color: var(--glow-color);
+}
+
+.client-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 1.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.client-logo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px var(--glow-color);
+}
+
+.testimonial-quote {
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+  opacity: 0.9;
+}
+
+.rating {
+  margin-bottom: 1rem;
+}
+
+.star-icon {
+  color: #ffd700;
+  font-size: 1.2rem;
+  margin: 0 0.1rem;
+  transition: all 0.3s ease;
+}
+
+.star-icon:hover {
+  transform: scale(1.2);
+  text-shadow: 0 0 10px #ffd700;
+}
+
+.client-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.client-role {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+  .testimonials-section {
+    padding: 4rem 0;
+  }
+
+  .testimonials-heading {
+    font-size: 2rem;
+  }
+
+  .testimonial-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .testimonials-section {
+    padding: 3rem 0;
+  }
+
+  .testimonials-heading {
+    font-size: 1.75rem;
+  }
+
+  .testimonial-card {
+    padding: 1rem;
+  }
+
+  .client-logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .testimonial-quote {
+    font-size: 0.9rem;
+  }
+
+  .client-name {
+    font-size: 1rem;
+  }
+}

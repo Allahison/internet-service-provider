@@ -1,0 +1,149 @@
+/* Features.css - Premium, Futuristic Theme for Black Box AI */
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --glow-color: rgba(102, 126, 234, 0.8);
+  --text-color: #ffffff;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --backdrop-blur: blur(10px);
+  --font-family: 'Inter', sans-serif; /* Modern font, ensure imported */
+}
+
+.features-section {
+  background: var(--primary-gradient);
+  padding: 5rem 0;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-family);
+}
+
+.features-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  z-index: 1;
+}
+
+.features-section > .container {
+  position: relative;
+  z-index: 2;
+}
+
+.features-heading {
+  font-weight: 700;
+  font-size: 2.5rem;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  text-shadow: 0 0 20px var(--glow-color);
+}
+
+.features-subtext {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 3rem;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 2rem;
+  height: 100%;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  border-color: var(--glow-color);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.1);
+  color: var(--glow-color);
+  text-shadow: 0 0 20px var(--glow-color);
+}
+
+.feature-title {
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  letter-spacing: 0.5px;
+}
+
+.feature-description {
+  color: var(--text-color);
+  opacity: 0.9;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+  .features-section {
+    padding: 4rem 0;
+  }
+
+  .features-heading {
+    font-size: 2rem;
+  }
+
+  .features-subtext {
+    font-size: 1rem;
+  }
+
+  .feature-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .features-section {
+    padding: 3rem 0;
+  }
+
+  .features-heading {
+    font-size: 1.75rem;
+  }
+
+  .feature-card {
+    padding: 1rem;
+  }
+
+  .feature-icon {
+    font-size: 2.5rem;
+  }
+
+  .feature-title {
+    font-size: 1.1rem;
+  }
+
+  .feature-description {
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,187 @@
+/* Pricing.css - Premium, Futuristic Theme for Black Box AI */
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --glow-color: rgba(102, 126, 234, 0.8);
+  --text-color: #ffffff;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --backdrop-blur: blur(10px);
+  --font-family: 'Inter', sans-serif; /* Modern font, ensure imported */
+}
+
+.pricing-section {
+  background: var(--primary-gradient);
+  padding: 5rem 0;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-family);
+}
+
+.pricing-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  z-index: 1;
+}
+
+.pricing-section > .container {
+  position: relative;
+  z-index: 2;
+}
+
+.pricing-heading {
+  font-weight: 700;
+  font-size: 2.5rem;
+  letter-spacing: 1px;
+  margin-bottom: 3rem;
+  color: var(--text-color);
+  text-shadow: 0 0 20px var(--glow-color);
+}
+
+.pricing-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  height: 100%;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.pricing-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  border-color: var(--glow-color);
+}
+
+.pricing-card.popular {
+  border-color: var(--glow-color);
+  box-shadow: 0 0 30px var(--glow-color);
+}
+
+.popular-badge {
+  background: var(--secondary-gradient);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+}
+
+.card-title {
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.card-price {
+  font-weight: 600;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+  background: var(--primary-gradient);
+  
+  
+  background-clip: text;
+  text-shadow: 0 0 20px var(--glow-color);
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 2rem;
+}
+
+.features-list li {
+  padding: 0.5rem 0;
+  color: var(--text-color);
+  opacity: 0.9;
+  font-size: 0.95rem;
+}
+
+.pricing-btn {
+  background: var(--secondary-gradient);
+  color: var(--text-color);
+  border: none;
+  border-radius: 25px;
+  padding: 1rem 2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+  cursor: pointer;
+  width: 100%;
+}
+
+.pricing-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(245, 87, 108, 0.6);
+  background: var(--primary-gradient);
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+  .pricing-section {
+    padding: 4rem 0;
+  }
+
+  .pricing-heading {
+    font-size: 2rem;
+  }
+
+  .pricing-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .pricing-section {
+    padding: 3rem 0;
+  }
+
+  .pricing-heading {
+    font-size: 1.75rem;
+  }
+
+  .pricing-card {
+    padding: 1rem;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+  }
+
+  .card-price {
+    font-size: 1.5rem;
+  }
+
+  .features-list li {
+    font-size: 0.9rem;
+  }
+
+  .pricing-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}

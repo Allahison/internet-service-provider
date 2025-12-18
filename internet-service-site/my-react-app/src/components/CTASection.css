@@ -1,0 +1,166 @@
+/* CTASection.css - Premium, Futuristic Theme for Black Box AI */
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --glow-color: rgba(102, 126, 234, 0.8);
+  --text-color: #ffffff;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --backdrop-blur: blur(10px);
+  --font-family: 'Inter', sans-serif; /* Modern font, ensure imported */
+}
+
+.cta-section {
+  background: var(--primary-gradient);
+  padding: 5rem 0;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-family);
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  z-index: 1;
+}
+
+.cta-section > .container {
+  position: relative;
+  z-index: 2;
+}
+
+.cta-heading {
+  font-weight: 700;
+  font-size: 2.5rem;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  text-shadow: 0 0 20px var(--glow-color);
+}
+
+.cta-subtext {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 3rem;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.cta-form {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.cta-form:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  transform: translateY(-5px);
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: var(--glow-color);
+  box-shadow: 0 0 20px var(--glow-color);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.cta-btn {
+  background: var(--secondary-gradient);
+  color: var(--text-color);
+  border: none;
+  border-radius: 25px;
+  padding: 1rem 2rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+  cursor: pointer;
+}
+
+.cta-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(245, 87, 108, 0.6);
+  background: var(--primary-gradient);
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+  .cta-section {
+    padding: 4rem 0;
+  }
+
+  .cta-heading {
+    font-size: 2rem;
+  }
+
+  .cta-subtext {
+    font-size: 1rem;
+  }
+
+  .cta-form {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .cta-section {
+    padding: 3rem 0;
+  }
+
+  .cta-heading {
+    font-size: 1.75rem;
+  }
+
+  .cta-form {
+    padding: 1rem;
+  }
+
+  .form-input,
+  .form-textarea {
+    padding: 0.75rem;
+  }
+
+  .cta-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+}
