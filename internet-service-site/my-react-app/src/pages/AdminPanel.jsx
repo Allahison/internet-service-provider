@@ -19,6 +19,9 @@ export default function AdminPanel() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
+  // Backend URL from environment variable
+  const API_URL = import.meta.env.VITE_API_URL || "https://internet-service-provider-oyoi.onrender.com";
+
   /* ===============================
      AUTH CHECK
   ================================ */
@@ -37,7 +40,7 @@ export default function AdminPanel() {
   const fetchAdmins = async () => {
     setFetchingAdmins(true);
     try {
-      const res = await axios.get("http://localhost:5000/admin/all", {
+      const res = await axios.get(`${API_URL}/admin/all`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       setAdmins(res.data.admins || []);
@@ -56,7 +59,7 @@ export default function AdminPanel() {
     setLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:5000/admin/create",
+        `${API_URL}/admin/create`,
         { email, password },
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
@@ -75,7 +78,7 @@ export default function AdminPanel() {
     if (!window.confirm("Are you sure you want to delete this admin?")) return;
 
     try {
-      const res = await axios.delete(`http://localhost:5000/admin/delete/${id}`, {
+      const res = await axios.delete(`${API_URL}/admin/delete/${id}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       alert(res.data.message || "Admin deleted successfully");
@@ -104,9 +107,6 @@ export default function AdminPanel() {
       <AdminNavbar onLogout={handleLogout} />
 
       <div className="container mt-5 pt-5">
-        {/* ===============================
-            DASHBOARD SECTION
-        ================================ */}
         <section id="dashboard" className="mb-5">
           <h1 className="mb-4 text-center">⚡ Admin Dashboard</h1>
           <p className="text-center mb-4">
@@ -114,9 +114,6 @@ export default function AdminPanel() {
           </p>
         </section>
 
-        {/* ===============================
-            ADMINS SECTION
-        ================================ */}
         {userRole === "super-admin" && (
           <section id="admins" className="mb-5">
             <h2 className="mb-3">Create New Admin</h2>
@@ -142,9 +139,6 @@ export default function AdminPanel() {
           </section>
         )}
 
-        {/* ===============================
-            MESSAGES SECTION
-        ================================ */}
         {(userRole === "admin" || userRole === "super-admin") && (
           <section id="messages" className="mb-5">
             <h2 className="mb-3">Contact Messages</h2>
@@ -152,9 +146,6 @@ export default function AdminPanel() {
           </section>
         )}
 
-        {/* ===============================
-            PRICING SECTION
-        ================================ */}
         {(userRole === "admin" || userRole === "super-admin") && (
           <section id="pricing" className="mb-5">
             <h2 className="mb-3">Pricing Management</h2>
@@ -162,9 +153,6 @@ export default function AdminPanel() {
           </section>
         )}
 
-        {/* ===============================
-            USER INFO SECTION
-        ================================ */}
         <section id="userinfo" className="mb-5">
           <AdminInfo userRole={userRole} />
         </section>

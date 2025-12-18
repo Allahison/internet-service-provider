@@ -13,6 +13,9 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
+  // Backend URL from environment variable (Vite)
+  const API_URL = import.meta.env.VITE_API_URL || "https://internet-service-provider-oyoi.onrender.com";
+
   useEffect(() => {
     const userString = localStorage.getItem("user");
     if (!userString) {
@@ -46,8 +49,6 @@ export default function Dashboard() {
         <HeroSection />
       </section>
 
-      
-
       {/* Features Section */}
       <section id="features">
         <FeaturesSection />
@@ -60,7 +61,7 @@ export default function Dashboard() {
 
       {/* Pricing Section */}
       <section id="plans">
-        <PricingSection />
+        <PricingSection apiUrl={API_URL} user={user} />
       </section>
 
       {/* Testimonials Section */}
@@ -68,7 +69,6 @@ export default function Dashboard() {
         <TestimonialsSection />
       </section>
 
-      
       {/* Call-to-Action Section */}
       <section id="cta">
         <CTASection />
