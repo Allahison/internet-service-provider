@@ -12,6 +12,8 @@ export default function CTASection() {
 
   const [loading, setLoading] = useState(false);
 
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -22,7 +24,7 @@ export default function CTASection() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/contact", formData);
+      const res = await axios.post(`${API_URL}/contact`, formData);
       alert(res.data.message || "Message sent successfully");
       setFormData({ name: "", email: "", message: "" });
     } catch (err) {
