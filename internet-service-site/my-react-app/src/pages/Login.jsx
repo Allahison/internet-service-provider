@@ -8,11 +8,13 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Check if user is already logged in
+  // Backend API URL from .env
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  // Redirect if already logged in
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user?.role) {
-      // Redirect based on role
       if (user.role === "super-admin" || user.role === "admin") navigate("/admin");
       else if (user.role === "user") navigate("/dashboard");
     }
@@ -20,7 +22,6 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     if (!email || !password) {
       alert("Please enter email and password");
       return;
@@ -28,19 +29,15 @@ export default function Login() {
 
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/auth/login", { email, password });
+      const res = await axios.post(`${API_URL}/auth/login`, { email, password });
 
       // Save user info in localStorage
       localStorage.setItem("user", JSON.stringify(res.data));
 
       // Redirect based on role
-      if (res.data.role === "super-admin" || res.data.role === "admin") {
-        navigate("/admin");
-      } else if (res.data.role === "user") {
-        navigate("/dashboard");
-      } else {
-        alert("Unknown role. Contact support.");
-      }
+      if (res.data.role === "super-admin" || res.data.role === "admin") navigate("/admin");
+      else if (res.data.role === "user") navigate("/dashboard");
+      else alert("Unknown role. Contact support.");
     } catch (err) {
       alert(err.response?.data?.error || "Login failed");
     } finally {
@@ -59,6 +56,7 @@ export default function Login() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
         <div className="mb-3">
@@ -68,6 +66,7 @@ export default function Login() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </div>
         <button className="btn btn-primary w-100" type="submit" disabled={loading}>
@@ -77,9 +76,7 @@ export default function Login() {
 
       <p className="mt-3 text-center">
         Don't have an account?{" "}
-        <Link to="/signup" className="text-success">
-          Signup here
-        </Link>
+        <Link to="/signup" className="text-success">Signup here</Link>
       </p>
     </div>
   );
