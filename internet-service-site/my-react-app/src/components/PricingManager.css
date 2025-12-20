@@ -1,0 +1,40 @@
+.pm-wrapper {
+  padding: 2rem;
+}
+
+.pm-card {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.pm-title {
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.pm-form input {
+  font-size: 0.9rem;
+}
+
+.pm-table th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+.pm-table td,
+.pm-table th {
+  vertical-align: middle;
+}
+
+@media (max-width: 768px) {
+  .pm-wrapper {
+    padding: 1rem;
+  }
+
+  .pm-card {
+    padding: 1.25rem;
+  }
+}

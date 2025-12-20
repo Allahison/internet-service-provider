@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import AdminNavbar from "../components/AdminNavbar";
 import AdminForm from "../components/AdminForm";
 import AdminList from "../components/AdminList";
-import AdminInfo from "../components/AdminInfo";
 import PricingManager from "../components/PricingManager";
 import AdminContacts from "../components/AdminContacts";
+import Spinner from "../components/Spinner";
+import Skeleton from "../components/Skeleton";
+import "./admin.css";
 
 export default function AdminPanel() {
   const [email, setEmail] = useState("");
@@ -15,148 +16,235 @@ export default function AdminPanel() {
   const [userRole, setUserRole] = useState(null);
   const [admins, setAdmins] = useState([]);
   const [fetchingAdmins, setFetchingAdmins] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("dashboard");
+  const [globalLoading, setGlobalLoading] = useState(true);
 
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const API_URL =
+    import.meta.env.VITE_API_URL ||
+    "https://internet-service-provider-oyoi.onrender.com";
 
-  // Backend URL from environment variable
-  const API_URL = import.meta.env.VITE_API_URL || "https://internet-service-provider-oyoi.onrender.com";
-
-  /* ===============================
-     AUTH CHECK
-  ================================ */
   useEffect(() => {
-    if (!user?.token) {
+    if (!storedUser?.token) {
       navigate("/login");
       return;
     }
-    setUserRole(user.role);
-    if (user.role === "super-admin") fetchAdmins();
-  }, [navigate]);
 
-  /* ===============================
-     ADMIN MANAGEMENT
-  ================================ */
-  const fetchAdmins = async () => {
+    setUserRole(storedUser.role);
+
+    const init = async () => {
+      // Only fetch admins if super-admin
+      if (storedUser.role === "super-admin") {
+        await fetchAdmins();
+      }
+      setGlobalLoading(false);
+    };
+
+    init();
+  }, [navigate, storedUser]);
+
+  const fetchAdmins = useCallback(async () => {
+    if (!storedUser?.token || storedUser.role !== "super-admin") return;
+
     setFetchingAdmins(true);
     try {
       const res = await axios.get(`${API_URL}/admin/all`, {
-        headers: { Authorization: `Bearer ${user.token}` },
+        headers: { Authorization: `Bearer ${storedUser.token}` },
       });
       setAdmins(res.data.admins || []);
     } catch (err) {
-      console.error(err);
-      alert("Failed to fetch admins");
+      // Handle 401 silently
+      if (err.response?.status === 401) {
+        console.warn("Unauthorized: cannot fetch admins");
+      } else {
+        console.error("Fetch admins error:", err);
+        alert("Failed to fetch admins");
+      }
     } finally {
       setFetchingAdmins(false);
     }
-  };
+  }, [API_URL, storedUser?.token, storedUser?.role]);
 
   const handleCreateAdmin = async (e) => {
     e.preventDefault();
-    if (!email || !password) return alert("Please enter email and password");
+    if (!email || !password) return alert("Please enter email & password");
+    if (!storedUser?.token) return alert("User token missing");
 
     setLoading(true);
     try {
-      const res = await axios.post(
+      await axios.post(
         `${API_URL}/admin/create`,
         { email, password },
-        { headers: { Authorization: `Bearer ${user.token}` } }
+        { headers: { Authorization: `Bearer ${storedUser.token}` } }
       );
-      alert(res.data.message || "Admin created successfully");
       setEmail("");
       setPassword("");
       fetchAdmins();
     } catch (err) {
-      alert(err.response?.data?.error || "Failed to create admin");
+      console.error("Create admin error:", err);
+      alert("Failed to create admin");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteAdmin = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this admin?")) return;
+    if (!window.confirm("Delete this admin?")) return;
+    if (!storedUser?.token) return alert("User token missing");
 
     try {
-      const res = await axios.delete(`${API_URL}/admin/delete/${id}`, {
-        headers: { Authorization: `Bearer ${user.token}` },
+      await axios.delete(`${API_URL}/admin/delete/${id}`, {
+        headers: { Authorization: `Bearer ${storedUser.token}` },
       });
-      alert(res.data.message || "Admin deleted successfully");
       fetchAdmins();
     } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.error || "Failed to delete admin");
+      console.error("Delete admin error:", err);
+      alert("Delete failed");
     }
   };
 
-  /* ===============================
-     LOGOUT
-  ================================ */
   const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/login");
   };
 
-  if (!user) return null;
+  if (!storedUser) return null;
 
-  /* ===============================
-     UI SECTIONS MATCHING NAVBAR
-  ================================ */
-  return (
-    <>
-      <AdminNavbar onLogout={handleLogout} />
+  const navItems = useMemo(
+    () => [
+      { id: "dashboard", label: "Dashboard", icon: "📊" },
+      ...(userRole === "super-admin"
+        ? [{ id: "admins", label: "Admins", icon: "👥" }]
+        : []),
+      { id: "messages", label: "Messages", icon: "💬" },
+      { id: "pricing", label: "Pricing", icon: "💰" },
+    ],
+    [userRole]
+  );
 
-      <div className="container mt-5 pt-5">
-        <section id="dashboard" className="mb-5">
-          <h1 className="mb-4 text-center">⚡ Admin Dashboard</h1>
-          <p className="text-center mb-4">
-            Logged in as: <strong>{userRole}</strong>
-          </p>
-        </section>
+  const dashboardStats = useMemo(
+    () => [
+      { label: "Users", value: Math.floor(Math.random() * 5000 + 1000), icon: "👥", color: "#3b82f6" },
+      { label: "Revenue", value: `$${(Math.random() * 50000 + 1000).toFixed(2)}`, icon: "💰", color: "#10b981" },
+      { label: "Orders", value: Math.floor(Math.random() * 1000 + 100), icon: "📦", color: "#f59e0b" },
+      { label: "Messages", value: Math.floor(Math.random() * 300 + 20), icon: "💬", color: "#ef4444" },
+    ],
+    []
+  );
 
-        {userRole === "super-admin" && (
-          <section id="admins" className="mb-5">
-            <h2 className="mb-3">Create New Admin</h2>
-            <div className="row justify-content-center">
-              <div className="col-12 col-md-6">
-                <AdminForm
-                  email={email}
-                  password={password}
-                  onChangeEmail={(e) => setEmail(e.target.value)}
-                  onChangePassword={(e) => setPassword(e.target.value)}
-                  onSubmit={handleCreateAdmin}
-                  loading={loading}
-                />
-              </div>
+  const renderSection = () => {
+    switch (activeSection) {
+      case "dashboard":
+        return (
+          <div className="dashboard-section">
+            <h1 className="section-title">⚡ Admin Dashboard</h1>
+            <div className="stats-grid">
+              {dashboardStats.map((stat, i) => (
+                <div className="stat-card" key={i} style={{ borderTop: `4px solid ${stat.color}` }}>
+                  {globalLoading ? (
+                    <Skeleton width="100%" height="120px" />
+                  ) : (
+                    <>
+                      <div className="stat-icon">{stat.icon}</div>
+                      <div className="stat-value">{stat.value}</div>
+                      <div className="stat-label">{stat.label}</div>
+                    </>
+                  )}
+                </div>
+              ))}
             </div>
-
-            <h2 className="mt-5 mb-3">Existing Admins</h2>
+          </div>
+        );
+      case "admins":
+        return userRole === "super-admin" ? (
+          <>
+            <AdminForm
+              email={email}
+              password={password}
+              onChangeEmail={(e) => setEmail(e.target.value)}
+              onChangePassword={(e) => setPassword(e.target.value)}
+              onSubmit={handleCreateAdmin}
+              loading={loading}
+            />
             <AdminList
               admins={admins}
               loading={fetchingAdmins}
               onDelete={handleDeleteAdmin}
             />
-          </section>
-        )}
+          </>
+        ) : null;
+      case "messages":
+        return <AdminContacts token={storedUser.token} />;
+      case "pricing":
+        return <PricingManager user={storedUser} />;
+      default:
+        return null;
+    }
+  };
 
-        {(userRole === "admin" || userRole === "super-admin") && (
-          <section id="messages" className="mb-5">
-            <h2 className="mb-3">Contact Messages</h2>
-            <AdminContacts token={user.token} />
-          </section>
-        )}
-
-        {(userRole === "admin" || userRole === "super-admin") && (
-          <section id="pricing" className="mb-5">
-            <h2 className="mb-3">Pricing Management</h2>
-            <PricingManager user={user} />
-          </section>
-        )}
-
-        <section id="userinfo" className="mb-5">
-          <AdminInfo userRole={userRole} />
-        </section>
+  if (globalLoading)
+    return (
+      <div className="global-loader">
+        <Spinner />
       </div>
-    </>
+    );
+
+  return (
+    <div className="admin-layout">
+      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+        <div className="sidebar-header">
+          <h2>Admin Panel</h2>
+          <button
+            className="close-btn mobile-only"
+            onClick={() => setSidebarOpen(false)}
+          >
+            &times;
+          </button>
+        </div>
+        <nav className="nav-items">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              className={`nav-item ${activeSection === item.id ? "active" : ""}`}
+              onClick={() => {
+                setActiveSection(item.id);
+                setSidebarOpen(false);
+              }}
+            >
+              <span className="icon">{item.icon}</span>
+              {item.label}
+            </button>
+          ))}
+        </nav>
+      </aside>
+
+      {sidebarOpen && (
+        <div
+          className="sidebar-overlay mobile-only"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
+      <div className="main-content">
+        <header className="top-navbar">
+          <div className="admin-profile-top-left">
+            <span className="admin-email">{storedUser.email}</span>
+          </div>
+          <button
+            className="burger-btn mobile-only"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            ☰
+          </button>
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </header>
+
+        <main className="content-area">{renderSection()}</main>
+      </div>
+    </div>
   );
 }

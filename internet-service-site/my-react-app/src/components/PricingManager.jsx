@@ -1,43 +1,44 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import Spinner from "./Spinner";
+import Skeleton from "./Skeleton";
+import "./PricingManager.css";
 
 export default function PricingManager({ user }) {
   const [plans, setPlans] = useState([]);
-  const [planLoading, setPlanLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false); // new: form submit loading
   const [editingPlan, setEditingPlan] = useState(null);
 
-  const [planForm, setPlanForm] = useState({
+  const [form, setForm] = useState({
     name: "",
     price: "",
     features: "",
     popular: false,
   });
 
-  // Use Vite environment variable
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  /* ===============================
-     FETCH PLANS
-  ================================ */
+  /* Fetch Plans */
   const fetchPlans = async () => {
-    setPlanLoading(true);
+    setLoading(true);
     try {
       const res = await axios.get(`${API_URL}/pricing`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
 
-      const formattedPlans = (res.data.pricing || []).map((plan) => ({
-        ...plan,
-        features: Array.isArray(plan.features) ? plan.features : [],
-        popular: plan.popular ?? false,
-      }));
-      setPlans(formattedPlans);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to fetch pricing plans");
+      setPlans(
+        (res.data.pricing || []).map((p) => ({
+          ...p,
+          features: Array.isArray(p.features) ? p.features : [],
+          popular: p.popular ?? false,
+        }))
+      );
+    } catch {
+      alert("Failed to load plans");
     } finally {
-      setPlanLoading(false);
+      setLoading(false);
     }
   };
 
@@ -45,64 +46,46 @@ export default function PricingManager({ user }) {
     fetchPlans();
   }, []);
 
-  /* ===============================
-     FORM HANDLING
-  ================================ */
-  const handlePlanChange = (e) => {
+  /* Form Handling */
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setPlanForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
   };
 
-  const handlePlanSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!planForm.name || !planForm.price) {
-      return alert("Name and Price required");
-    }
-
+    setSaving(true);
     const payload = {
-      plan_name: planForm.name,
-      price: planForm.price,
-      features: planForm.features
-        ? planForm.features.split(",").map((f) => f.trim())
+      plan_name: form.name,
+      price: form.price,
+      features: form.features
+        ? form.features.split(",").map((f) => f.trim())
         : [],
-      popular: planForm.popular,
+      popular: form.popular,
     };
 
     try {
-      if (editingPlan) {
-        await axios.put(`${API_URL}/pricing/${editingPlan.id}`, payload, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-        alert("Plan updated!");
-      } else {
-        await axios.post(`${API_URL}/pricing`, payload, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-        alert("Plan created!");
-      }
+      editingPlan
+        ? await axios.put(`${API_URL}/pricing/${editingPlan.id}`, payload, {
+            headers: { Authorization: `Bearer ${user.token}` },
+          })
+        : await axios.post(`${API_URL}/pricing`, payload, {
+            headers: { Authorization: `Bearer ${user.token}` },
+          });
 
-      resetForm();
+      setForm({ name: "", price: "", features: "", popular: false });
+      setEditingPlan(null);
       fetchPlans();
-    } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.error || "Failed to save plan");
+    } catch {
+      alert("Save failed");
+    } finally {
+      setSaving(false);
     }
   };
 
-  const resetForm = () => {
-    setPlanForm({ name: "", price: "", features: "", popular: false });
-    setEditingPlan(null);
-  };
-
-  /* ===============================
-     EDIT / DELETE
-  ================================ */
-  const handleEditPlan = (plan) => {
+  const handleEdit = (plan) => {
     setEditingPlan(plan);
-    setPlanForm({
+    setForm({
       name: plan.plan_name,
       price: plan.price,
       features: plan.features.join(", "),
@@ -110,128 +93,114 @@ export default function PricingManager({ user }) {
     });
   };
 
-  const handleDeletePlan = async (id) => {
-    if (!window.confirm("Delete this plan?")) return;
-
-    try {
-      await axios.delete(`${API_URL}/pricing/${id}`, {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      alert("Plan deleted!");
-      setPlans((prev) => prev.filter((plan) => plan.id !== id));
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete plan");
-    }
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete plan?")) return;
+    await axios.delete(`${API_URL}/pricing/${id}`, {
+      headers: { Authorization: `Bearer ${user.token}` },
+    });
+    setPlans(plans.filter((p) => p.id !== id));
   };
 
-  /* ===============================
-     UI
-  ================================ */
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4 text-center">Manage Pricing Plans</h2>
+    <div className="pm-wrapper">
+      <div className="pm-card">
+        <h3 className="pm-title">Pricing Management</h3>
 
-      {/* FORM */}
-      <form onSubmit={handlePlanSubmit} className="mb-5">
-        <div className="row g-3 align-items-center">
-          <div className="col-12 col-md-3">
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="pm-form row g-3">
+          <div className="col-md-3">
             <input
               name="name"
-              value={planForm.name}
-              onChange={handlePlanChange}
+              value={form.name}
+              onChange={handleChange}
               placeholder="Plan Name"
               className="form-control"
               required
             />
           </div>
 
-          <div className="col-12 col-md-2">
+          <div className="col-md-2">
             <input
               name="price"
-              value={planForm.price}
-              onChange={handlePlanChange}
+              value={form.price}
+              onChange={handleChange}
               placeholder="Price"
               className="form-control"
               required
             />
           </div>
 
-          <div className="col-12 col-md-4">
+          <div className="col-md-4">
             <input
               name="features"
-              value={planForm.features}
-              onChange={handlePlanChange}
+              value={form.features}
+              onChange={handleChange}
               placeholder="Features (comma separated)"
               className="form-control"
             />
           </div>
 
-          <div className="col-12 col-md-2 d-flex align-items-center">
+          <div className="col-md-2 d-flex align-items-center">
             <input
               type="checkbox"
               name="popular"
-              checked={planForm.popular}
-              onChange={handlePlanChange}
+              checked={form.popular}
+              onChange={handleChange}
               className="form-check-input me-2"
-              id="popularCheckbox"
             />
-            <label htmlFor="popularCheckbox" className="form-check-label">
-              Popular
-            </label>
+            Popular
           </div>
 
-          <div className="col-12 col-md-1">
-            <button className="btn btn-primary w-100">
-              {editingPlan ? "Update" : "Add"}
+          <div className="col-md-1">
+            <button className="btn btn-primary w-100" disabled={saving}>
+              {saving ? <Spinner size="sm" /> : editingPlan ? "Update" : "Add"}
             </button>
           </div>
-        </div>
-      </form>
+        </form>
 
-      {/* TABLE */}
-      {planLoading ? (
-        <p className="text-center">Loading plans...</p>
-      ) : (
-        <div className="table-responsive">
-          <table className="table table-striped table-hover">
-            <thead className="table-dark">
-              <tr>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Features</th>
-                <th>Popular</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {plans.map((plan) => (
-                <tr key={plan.id}>
-                  <td>{plan.plan_name}</td>
-                  <td>{plan.price}</td>
-                  <td>{plan.features.join(", ")}</td>
-                  <td>{plan.popular ? "Yes" : "No"}</td>
-                  <td>
-                    <button
-                      className="btn btn-sm btn-info me-2 mb-1"
-                      onClick={() => handleEditPlan(plan)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-sm btn-danger mb-1"
-                      onClick={() => handleDeletePlan(plan.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
+        {/* TABLE */}
+        {loading ? (
+          <Skeleton rows={5} cols={5} /> // Using skeleton instead of text
+        ) : (
+          <div className="table-responsive mt-4">
+            <table className="table table-hover pm-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th>Features</th>
+                  <th>Popular</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {plans.map((p) => (
+                  <tr key={p.id}>
+                    <td>{p.plan_name}</td>
+                    <td>{p.price}</td>
+                    <td>{p.features.join(", ")}</td>
+                    <td>{p.popular ? "Yes" : "No"}</td>
+                    <td>
+                      <button
+                        className="btn btn-sm btn-info me-2"
+                        onClick={() => handleEdit(p)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDelete(p.id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Snowfall from "react-snowfall"; // Snowfall animation
 import NavbarComponent from "../components/Navbar";
 import FooterComponent from "../components/Footer";
 import HeroSection from "../components/HeroSection";
@@ -9,12 +10,15 @@ import PricingSection from "../components/Pricing";
 import TestimonialsSection from "../components/Reviews";
 import CTASection from "../components/CTA";
 
+
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
-  // Backend URL from environment variable (Vite)
-  const API_URL = import.meta.env.VITE_API_URL || "https://internet-service-provider-oyoi.onrender.com";
+  const API_URL =
+    import.meta.env.VITE_API_URL ||
+    "https://internet-service-provider-oyoi.onrender.com";
 
   useEffect(() => {
     const userString = localStorage.getItem("user");
@@ -41,6 +45,13 @@ export default function Dashboard() {
 
   return (
     <>
+      {/* Snowfall Background */}
+      <Snowfall
+        color="white"
+        snowflakeCount={150}
+        style={{ position: "fixed", width: "100%", height: "100%", zIndex: 0 }}
+      />
+
       {/* Navbar */}
       <NavbarComponent user={user} onLogout={handleLogout} />
 

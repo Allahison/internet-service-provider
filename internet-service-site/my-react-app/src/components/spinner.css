@@ -1,0 +1,42 @@
+/* Spinner Loader Styles */
+/* Add this to your spinner.css file or inline in your component */
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Base size; overridden by size classes */
+}
+
+.spinner-inner {
+  border: 4px solid #e5e7eb; /* Light gray border for the track */
+  border-top: 4px solid #4f46e5; /* Primary indigo color for the spinning part */
+  border-radius: 50%; /* Circular shape */
+  animation: spin 1s linear infinite; /* Smooth spinning animation */
+}
+
+/* Size variants */
+.small .spinner-inner {
+  width: 20px;
+  height: 20px;
+}
+
+.medium .spinner-inner {
+  width: 40px;
+  height: 40px;
+}
+
+.large .spinner-inner {
+  width: 60px;
+  height: 60px;
+}
+
+/* Spin animation keyframes */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

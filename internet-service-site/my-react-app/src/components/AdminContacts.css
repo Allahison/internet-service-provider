@@ -1,0 +1,89 @@
+.contacts-section {
+  padding: 20px;
+  background: #f9f9fb;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.section-title {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.table-responsive.card {
+  padding: 15px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.contacts-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+.contacts-table th {
+  text-align: left;
+  color: #555;
+  font-weight: 600;
+  padding: 10px 12px;
+}
+
+.contacts-table td {
+  padding: 12px;
+  background: #fefefe;
+  border-radius: 8px;
+  vertical-align: middle;
+}
+
+.contacts-table tr:hover td {
+  background: #f1f5f9;
+  transition: 0.3s;
+}
+
+.message-cell {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fff;
+  text-transform: capitalize;
+}
+
+.status-badge.new {
+  background-color: #ff6b6b;
+}
+
+.status-badge.replied {
+  background-color: #38b000;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  transition: transform 0.2s;
+}
+
+.action-btn:hover {
+  transform: scale(1.05);
+}
+
+.no-messages {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  padding: 40px 0;
+}

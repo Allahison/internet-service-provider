@@ -1,0 +1,19 @@
+/* Skeleton Loader Styles */
+/* Add this to your skeleton.css file or inline in your component */
+
+.skeleton {
+  background-color: #e5e7eb; /* Light gray background, matching neutral theme */
+  border-radius: 4px; /* Subtle rounding for modern look */
+  animation: pulse 1.5s ease-in-out infinite; /* Pulse animation for loading effect */
+  display: inline-block; /* Prevents layout issues */
+}
+
+/* Pulse animation keyframes */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
